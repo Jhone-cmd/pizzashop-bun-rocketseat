@@ -9,9 +9,11 @@
     "build": "bun build index.ts --outdir=dist --target=esnext --external:typescript"
   },
   "devDependencies": {
-    "@types/bun": "latest"
+    "@biomejs/biome": "2.2.2",
+    "@types/bun": "latest",
+    "ultracite": "5.3.3"
   },
   "peerDependencies": {
-    "typescript": "^5"
+    "typescript": "^5.9.2"
   }
 }
