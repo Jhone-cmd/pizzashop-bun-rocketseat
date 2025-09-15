@@ -1,0 +1,15 @@
+services:
+  pg:
+    container_name: pizzashop-pg
+    image: bitnami/postgresql:latest
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_USER: docker
+      POSTGRES_PASSWORD: docker
+      POSTGRES_DB: pizzashop
+    volumes:
+      - ./postgres-data:/bitnami/postgresql
+
+volumes:
+  postgres-data:
