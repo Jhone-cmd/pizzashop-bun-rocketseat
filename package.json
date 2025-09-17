@@ -7,7 +7,8 @@
     "dev": "bun --watch src/http/server.ts",
     "build": "bun build src/http/server.ts --target bun --outdir ./dist",
     "start": "NODE_ENV=production bun dist/http/server.js",
-    "test": "bun test"
+    "test": "bun test",
+    "generate": "drizzle-kit generate"
   },
   "devDependencies": {
     "@biomejs/biome": "2.2.2",
