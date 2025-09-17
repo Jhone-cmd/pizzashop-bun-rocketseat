@@ -9,7 +9,8 @@
     "start": "NODE_ENV=production bun dist/http/server.js",
     "test": "bun test",
     "generate": "drizzle-kit generate",
-    "migrate": "drizzle-kit migrate"
+    "migrate": "drizzle-kit migrate",
+    "studio": "drizzle-kit studio"
   },
   "devDependencies": {
     "@biomejs/biome": "2.2.2",
