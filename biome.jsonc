@@ -11,6 +11,10 @@
       "suspicious": {
         "noConsole": "off"
       },
+      "correctness": {
+        "noUnusedVariables": "off",
+        "noConstantCondition": "off"
+      },
       "style": {
         "noMagicNumbers": "off"
       },
