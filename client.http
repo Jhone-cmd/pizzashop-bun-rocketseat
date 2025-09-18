@@ -1,0 +1,13 @@
+@baseUrl = http://localhost:3333
+
+POST {{baseUrl}}/restaurants
+content-type: application/json
+
+{
+    "name": "John Doe",
+	"email": "johndoe@email.com",
+	"phone": "55 88 3265-9841",
+	"restaurantName": "pizza shop"
+}
+
+###
