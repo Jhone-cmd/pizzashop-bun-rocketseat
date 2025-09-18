@@ -1,4 +1,5 @@
 import Elysia from "elysia"
+import z from "zod"
 import { db } from "../../db/connection"
 import { restaurants } from "../../db/schemas"
 import { users } from "../../db/schemas/users"
@@ -6,7 +7,7 @@ import { users } from "../../db/schemas/users"
 export const registerRestaurant = new Elysia().post(
   "/restaurants",
   async ({ body, set }) => {
-    const { restaurantName, name, email, phone } = body as any
+    const { restaurantName, name, email, phone } = body
 
     const [manager] = await db
       .insert(users)
@@ -30,5 +31,13 @@ export const registerRestaurant = new Elysia().post(
     ])
 
     set.status = 204
+  },
+  {
+    body: z.object({
+      name: z.string(),
+      email: z.email(),
+      phone: z.string(),
+      restaurantName: z.string(),
+    }),
   }
 )
