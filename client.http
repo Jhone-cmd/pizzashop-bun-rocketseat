@@ -11,3 +11,12 @@ content-type: application/json
 }
 
 ###
+
+POST {{baseUrl}}/authenticate
+content-type: application/json
+
+{
+	"email": "admin@admin.com"
+}
+
+###
