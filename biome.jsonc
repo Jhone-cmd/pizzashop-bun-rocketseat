@@ -11,6 +11,9 @@
       "suspicious": {
         "noConsole": "off"
       },
+      "nursery": {
+        "noShadow": "off"
+      },
       "correctness": {
         "noUnusedVariables": "off",
         "noConstantCondition": "off"
