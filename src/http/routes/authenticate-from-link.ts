@@ -8,7 +8,7 @@ import { auth } from "../auth"
 
 export const authenticateFromLink = new Elysia().use(auth).get(
   "/auth-links/authenticate",
-  async ({ query, jwt: { sign }, setCookie, redirect }) => {
+  async ({ query, jwt: { sign }, cookie: { authCookie }, redirect }) => {
     const { code, auth_redirect } = query
 
     const authLinkFromCode = await db.query.authLinks.findFirst({
@@ -41,11 +41,10 @@ export const authenticateFromLink = new Elysia().use(auth).get(
       restaurantId: manageRestaurant?.id,
     })
 
-    console.log(token)
-
-    setCookie("auth", token, {
+    authCookie?.set({
+      value: token,
       httpOnly: true,
-      maxAge: 60 * 60 * 24 * 7, // 7 days
+      maxAge: 60 * 60 * 24 * 7, // 7 days,
       path: "/",
     })
 
