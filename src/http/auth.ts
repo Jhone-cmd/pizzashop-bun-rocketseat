@@ -1,6 +1,6 @@
 import crypto from "node:crypto"
 import jwt from "@elysiajs/jwt"
-import Elysia, { t } from "elysia"
+import Elysia, { type Static, t } from "elysia"
 import { env } from "../env/schema"
 
 const keyBuffer = Buffer.from(env.JWT_PRIVATE_KEY, "base64")
@@ -12,13 +12,34 @@ const privateKey = crypto.createPrivateKey({
   type: "pkcs8", // O tipo de chave (Private Key)
 })
 
-export const auth = new Elysia().use(
-  jwt({
-    secret: privateKey, // Use the KeyObject directly
-    alg: "RS256",
-    schema: t.Object({
-      sub: t.String(),
-      restaurantId: t.Optional(t.String()),
-    }),
+const jwtPayload = t.Object({
+  sub: t.String(),
+  restaurantId: t.Optional(t.String()),
+})
+
+export const auth = new Elysia()
+  .use(
+    jwt({
+      secret: privateKey, // Use the KeyObject directly
+      alg: "RS256",
+      schema: jwtPayload,
+    })
+  )
+  .derive({ as: "scoped" }, ({ jwt: { sign }, cookie: { authCookie } }) => {
+    return {
+      singIn: async (payload: Static<typeof jwtPayload>) => {
+        const token = await sign(payload)
+
+        authCookie?.set({
+          value: token,
+          httpOnly: true,
+          maxAge: 60 * 60 * 24 * 7, // 7 days,
+          path: "/",
+        })
+      },
+
+      singOut: async () => {
+        authCookie?.remove()
+      },
+    }
   })
-)
