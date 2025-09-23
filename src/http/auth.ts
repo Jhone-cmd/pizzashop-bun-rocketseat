@@ -3,13 +3,21 @@ import jwt from "@elysiajs/jwt"
 import Elysia, { type Static, t } from "elysia"
 import { env } from "../env/schema"
 
-const keyBuffer = Buffer.from(env.JWT_PRIVATE_KEY, "base64")
+// 1. Decodifica as chaves privadas e públicas
+const privateKeyBuffer = Buffer.from(env.JWT_PRIVATE_KEY, "base64")
+const publicKeyBuffer = Buffer.from(env.JWT_PUBLIC_KEY, "base64")
 
-// 2. Cria o KeyObject a partir do buffer
+// 2. Cria os KeyObjects
 const privateKey = crypto.createPrivateKey({
-  key: keyBuffer,
-  format: "der", // Use "der" para chaves em formato binário (decodificadas de Base64)
-  type: "pkcs8", // O tipo de chave (Private Key)
+  key: privateKeyBuffer,
+  format: "der",
+  type: "pkcs8",
+})
+
+const publicKey = crypto.createPublicKey({
+  key: publicKeyBuffer,
+  format: "der",
+  type: "spki",
 })
 
 const jwtPayload = t.Object({
@@ -20,52 +28,59 @@ const jwtPayload = t.Object({
 export const auth = new Elysia()
   .use(
     jwt({
-      secret: privateKey, // Use the KeyObject directly
+      name: "signer", // Nome para o plugin de assinatura
+      secret: privateKey, // Usa a chave privada para assinar
       alg: "RS256",
       schema: jwtPayload,
     })
   )
-  .derive(
-    { as: "scoped" },
-    ({ jwt: { sign, verify }, cookie: { authCookie } }) => {
-      return {
-        singIn: async (payload: Static<typeof jwtPayload>) => {
-          const token = await sign(payload)
-
-          authCookie?.set({
-            value: token,
-            httpOnly: true,
-            maxAge: 60 * 60 * 24 * 7, // 7 days,
-            path: "/",
-          })
-        },
-
-        singOut: async () => {
-          authCookie?.remove()
-        },
-
-        getCurrentUser: async () => {
-          if (!authCookie?.value) {
-            throw new Error("No token found in cookie")
-          }
-
-          try {
-            // Verify the token using the privateKey (public verification in RS256)
-            const payload = await verify(authCookie.value as string)
-
-            if (!payload) {
-              throw new Error("Token verification failed")
-            }
-
-            return {
-              userId: payload.sub,
-              restaurantId: payload.restaurantId,
-            }
-          } catch (error) {
-            console.error("Error verifying token:", error)
-            throw new Error("Unauthorized")
-          }
-        },
-      }
-    }
+  .use(
+    jwt({
+      name: "verifier", // Nome para o plugin de verificação
+      secret: publicKey, // Usa a chave pública para verificar
+      alg: "RS256",
+      schema: jwtPayload,
+    })
   )
+  .derive({ as: "scoped" }, ({ signer, verifier, cookie: { authCookie } }) => {
+    return {
+      singIn: async (payload: Static<typeof jwtPayload>) => {
+        // Usa o plugin "signer" para criar o token
+        const token = await signer.sign(payload)
+
+        authCookie?.set({
+          value: token,
+          httpOnly: true,
+          maxAge: 60 * 60 * 24 * 7, // 7 days,
+          path: "/",
+        })
+      },
+
+      singOut: async () => {
+        authCookie?.remove()
+      },
+
+      getCurrentUser: async () => {
+        if (!authCookie?.value) {
+          throw new Error("No token found in cookie")
+        }
+
+        try {
+          // Usa o plugin "verifier" para verificar o token
+          const payload = await verifier.verify(authCookie.value as string)
+
+          if (!payload) {
+            throw new Error("Token verification failed")
+          }
+
+          return {
+            userId: payload.sub,
+            restaurantId: payload.restaurantId,
+          }
+        } catch (error) {
+          console.error("Error verifying token:", error)
+          throw new Error("Unauthorized")
+        }
+      },
+    }
+  })
