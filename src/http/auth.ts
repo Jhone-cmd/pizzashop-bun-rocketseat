@@ -2,6 +2,7 @@ import crypto from "node:crypto"
 import jwt from "@elysiajs/jwt"
 import Elysia, { type Static, t } from "elysia"
 import { env } from "../env/schema"
+import { UnauthorizedError } from "./errors/unauthorized-error"
 
 // 1. Decodifica as chaves privadas e públicas
 const privateKeyBuffer = Buffer.from(env.JWT_PRIVATE_KEY, "base64")
@@ -26,6 +27,17 @@ const jwtPayload = t.Object({
 })
 
 export const auth = new Elysia()
+  .error({
+    UNAUTHORIZED: UnauthorizedError,
+  })
+  .onError(({ error, code, set }) => {
+    switch (code) {
+      case "UNAUTHORIZED": {
+        set.status = 401
+        return { code, message: error.message }
+      }
+    }
+  })
   .use(
     jwt({
       name: "signer", // Nome para o plugin de assinatura
@@ -79,7 +91,7 @@ export const auth = new Elysia()
           }
         } catch (error) {
           console.error("Error verifying token:", error)
-          throw new Error("Unauthorized")
+          throw new UnauthorizedError()
         }
       },
     }

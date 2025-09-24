@@ -14,3 +14,17 @@ app.use(authenticateFromLink)
 app.use(singOut)
 app.use(getProfile)
 app.use(getManagedRestaurant)
+
+app.onError(({ error, code, set }) => {
+  switch (code) {
+    case "VALIDATION": {
+      set.status = error.status
+      return error.toResponse()
+    }
+
+    default: {
+      console.error(error)
+      return new Response(null, { status: 500 })
+    }
+  }
+})

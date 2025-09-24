@@ -20,7 +20,8 @@
         "noConstantCondition": "off"
       },
       "style": {
-        "noMagicNumbers": "off"
+        "noMagicNumbers": "off",
+        "useDefaultSwitchClause": "off"
       },
       "performance": {
         "noBarrelFile": "off",
