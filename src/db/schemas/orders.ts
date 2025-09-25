@@ -1,7 +1,6 @@
 import { createId as cuid } from "@paralleldrive/cuid2"
 import { integer, pgEnum, pgTable, text, timestamp } from "drizzle-orm/pg-core"
-import { restaurants } from "./restaurants"
-import { users } from "./users"
+import { restaurants, users } from "."
 
 export const orderStatusEnum = pgEnum("order_status", [
   "pending",
