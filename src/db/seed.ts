@@ -1,4 +1,5 @@
 import { faker } from "@faker-js/faker"
+import { createId as cuid } from "@paralleldrive/cuid2"
 import chalk from "chalk"
 import { db } from "./connection"
 import {
@@ -105,6 +106,62 @@ const availableProducts = await db
   .returning()
 
 console.log(chalk.yellow("✔ Create products!"))
+
+/**
+ * Create orders
+ */
+
+type OrderItemsToInsert = typeof orderItems.$inferInsert
+type OrdersToInsert = typeof orders.$inferInsert
+
+const orderItemsToInsert: OrderItemsToInsert[] = []
+
+const ordersToInsert: OrdersToInsert[] = []
+
+for (let i = 0; i <= 200; i++) {
+  const orderId = cuid()
+
+  let totalInCents = 0
+
+  const ordersProducts = faker.helpers.arrayElements(availableProducts, {
+    min: 1,
+    max: 5,
+  })
+
+  ordersProducts.forEach((orderProduct) => {
+    const quantity = faker.number.int({ min: 1, max: 5 })
+
+    totalInCents += orderProduct.priceInCents * quantity
+
+    orderItemsToInsert.push({
+      orderId,
+      priceInCents: Number(orderProduct.priceInCents),
+      productId: orderProduct.id,
+      quantity,
+    })
+  })
+
+  ordersToInsert.push({
+    id: orderId,
+    totalInCents,
+    status: faker.helpers.arrayElement([
+      "pending",
+      "processing",
+      "delivering",
+      "delivered",
+      "canceled",
+    ]),
+    customerId: faker.helpers.arrayElement([customer1!.id, customer2!.id]),
+    restaurantId: restaurant!.id,
+    createdAt: faker.date.recent({ days: 40 }),
+  })
+}
+
+await db.insert(orders).values(ordersToInsert)
+console.log(chalk.yellow("✔ Create orders!"))
+
+await db.insert(orderItems).values(orderItemsToInsert)
+console.log(chalk.yellow("✔ Create orders-items!"))
 
 console.log(chalk.greenBright("✔ Database seeded successfully"))
 

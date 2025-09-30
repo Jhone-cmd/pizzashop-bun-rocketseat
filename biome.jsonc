@@ -27,6 +27,9 @@
       "performance": {
         "noBarrelFile": "off",
         "noNamespaceImport": "off"
+      },
+      "complexity": {
+        "noForEach": "off"
       }
     }
   }
