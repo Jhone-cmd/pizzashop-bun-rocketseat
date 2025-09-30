@@ -1,7 +1,14 @@
 import { faker } from "@faker-js/faker"
 import chalk from "chalk"
 import { db } from "./connection"
-import { restaurants, users } from "./schemas"
+import {
+  authLinks,
+  orderItems,
+  orders,
+  products,
+  restaurants,
+  users,
+} from "./schemas"
 
 /**
  * Reset Database
@@ -9,6 +16,10 @@ import { restaurants, users } from "./schemas"
 
 await db.delete(users)
 await db.delete(restaurants)
+await db.delete(products)
+await db.delete(orders)
+await db.delete(orderItems)
+await db.delete(authLinks)
 
 console.log(chalk.yellow("✔ Database reset!"))
 
