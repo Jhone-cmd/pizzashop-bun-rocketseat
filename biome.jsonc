@@ -21,7 +21,8 @@
       },
       "style": {
         "noMagicNumbers": "off",
-        "useDefaultSwitchClause": "off"
+        "useDefaultSwitchClause": "off",
+        "noNonNullAssertion": "off"
       },
       "performance": {
         "noBarrelFile": "off",
