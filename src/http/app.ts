@@ -1,4 +1,5 @@
 import { Elysia } from "elysia"
+import { approveOrder } from "./routes/approve-order"
 import { authenticateFromLink } from "./routes/authenticate-from-link"
 import { getManagedRestaurant } from "./routes/get-managed-restaurant"
 import { getOrderDetails } from "./routes/get-order-details"
@@ -16,6 +17,7 @@ app.use(singOut)
 app.use(getProfile)
 app.use(getManagedRestaurant)
 app.use(getOrderDetails)
+app.use(approveOrder)
 
 app.onError(({ error, code, set }) => {
   switch (code) {
