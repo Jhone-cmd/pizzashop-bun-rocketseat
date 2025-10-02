@@ -1,4 +1,4 @@
-import { and, count, eq, getTableColumns, ilike } from "drizzle-orm"
+import { and, count, desc, eq, ilike, sql } from "drizzle-orm"
 import Elysia from "elysia"
 import z from "zod"
 import { db } from "../../db/connection"
@@ -16,10 +16,14 @@ export const fetchOrders = new Elysia().use(auth).get(
       throw new UnauthorizedError()
     }
 
-    const orderTableColumns = getTableColumns(orders)
-
     const baseQuery = db
-      .select(orderTableColumns)
+      .select({
+        orderId: orders.id,
+        status: orders.status,
+        createdAt: orders.createdAt,
+        total: orders.totalInCents,
+        customerName: users.name,
+      })
       .from(orders)
       .innerJoin(users, eq(users.id, orders.customerId))
       .where(
@@ -37,7 +41,20 @@ export const fetchOrders = new Elysia().use(auth).get(
         .select()
         .from(baseQuery.as("baseQuery"))
         .offset(pageIndex * 10)
-        .limit(10),
+        .limit(10)
+        .orderBy((fields) => {
+          return [
+            sql`CASE ${fields.status}
+              WHEN 'pending' THEN 1
+              WHEN 'processing' THEN 2
+              WHEN 'delivering' THEN 3
+              WHEN 'delivered' THEN 4
+              WHEN 'canceled' THEN 99
+              END
+            `,
+            desc(fields.createdAt),
+          ]
+        }),
     ])
 
     const amountOfOrders = amountOfOrdersQuery[0]?.count ?? 0
