@@ -4,6 +4,7 @@ import { authenticateFromLink } from "./routes/authenticate-from-link"
 import { cancelOrder } from "./routes/cancel-order"
 import { deliverOrder } from "./routes/deliver-order"
 import { dispatchOrder } from "./routes/dispatch-order"
+import { fetchOrders } from "./routes/fetch-orders"
 import { getManagedRestaurant } from "./routes/get-managed-restaurant"
 import { getOrderDetails } from "./routes/get-order-details"
 import { getProfile } from "./routes/get-profile"
@@ -24,6 +25,7 @@ app.use(approveOrder)
 app.use(dispatchOrder)
 app.use(deliverOrder)
 app.use(cancelOrder)
+app.use(fetchOrders)
 
 app.onError(({ error, code, set }) => {
   switch (code) {
