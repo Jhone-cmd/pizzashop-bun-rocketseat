@@ -1,14 +1,14 @@
 import dayjs from "dayjs"
-import { and, eq, gte, sql, sum } from "drizzle-orm"
+import { and, count, eq, gte, sql } from "drizzle-orm"
 import Elysia from "elysia"
 import { db } from "../../db/connection"
 import { orders } from "../../db/schemas"
 import { auth } from "../auth"
 import { UnauthorizedError } from "../errors/unauthorized-error"
 
-export const getMonthReceipt = new Elysia()
+export const getMonthCanceledOrdersAmount = new Elysia()
   .use(auth)
-  .get("/metrics/month-receipt", async ({ getCurrentUser }) => {
+  .get("/metrics/month-canceled-orders-amount", async ({ getCurrentUser }) => {
     const { restaurantId } = await getCurrentUser()
 
     if (!restaurantId) {
@@ -19,15 +19,16 @@ export const getMonthReceipt = new Elysia()
     const lastMonth = today.subtract(1, "month")
     const startOfLastMonth = lastMonth.startOf("month")
 
-    const monthsReceipts = await db
+    const ordersPerMonth = await db
       .select({
-        monthWithYear: sql<string>`TO_CHAR(${orders.createdAt}, 'YYYY-MM')`,
-        receipt: sum(orders.totalInCents).mapWith(Number),
+        dayWithMonthAndYear: sql<string>`TO_CHAR(${orders.createdAt}, 'YYYY-MM')`,
+        amount: count(),
       })
       .from(orders)
       .where(
         and(
           eq(orders.restaurantId, restaurantId),
+          eq(orders.status, "canceled"),
           gte(orders.createdAt, startOfLastMonth.toDate())
         )
       )
@@ -36,21 +37,21 @@ export const getMonthReceipt = new Elysia()
     const currentMonthWitYear = today.format("YYYY-MM")
     const lastMonthWitYear = lastMonth.format("YYYY-MM")
 
-    const currentMonthReceipt = monthsReceipts.find((monthReceipt) => {
-      return monthReceipt.monthWithYear === currentMonthWitYear
+    const currentMonthOrdersAmount = ordersPerMonth.find((orderPerMonth) => {
+      return orderPerMonth.dayWithMonthAndYear === currentMonthWitYear
     })
 
-    const lastMonthReceipt = monthsReceipts.find((monthReceipt) => {
-      return monthReceipt.monthWithYear === lastMonthWitYear
+    const lastMonthOrdersAmount = ordersPerMonth.find((orderPerMonth) => {
+      return orderPerMonth.dayWithMonthAndYear === lastMonthWitYear
     })
 
     const diffFromLastMonth =
-      currentMonthReceipt && lastMonthReceipt
-        ? (currentMonthReceipt.receipt * 100) / lastMonthReceipt.receipt
+      currentMonthOrdersAmount && lastMonthOrdersAmount
+        ? (currentMonthOrdersAmount.amount * 100) / lastMonthOrdersAmount.amount
         : null
 
     return {
-      receipt: currentMonthReceipt?.receipt,
+      receipt: currentMonthOrdersAmount?.amount,
       diffFromLastMonth: diffFromLastMonth
         ? Number((diffFromLastMonth - 100).toFixed(2))
         : 0,

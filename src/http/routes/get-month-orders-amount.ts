@@ -8,7 +8,7 @@ import { UnauthorizedError } from "../errors/unauthorized-error"
 
 export const getMonthOrdersAmount = new Elysia()
   .use(auth)
-  .get("/metrics/get-month-orders-amount", async ({ getCurrentUser }) => {
+  .get("/metrics/month-orders-amount", async ({ getCurrentUser }) => {
     const { restaurantId } = await getCurrentUser()
 
     if (!restaurantId) {
