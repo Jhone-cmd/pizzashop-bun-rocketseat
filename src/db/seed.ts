@@ -153,7 +153,7 @@ for (let i = 0; i <= 200; i++) {
     ]),
     customerId: faker.helpers.arrayElement([customer1!.id, customer2!.id]),
     restaurantId: restaurant!.id,
-    createdAt: faker.date.recent({ days: 40 }),
+    createdAt: faker.date.recent({ days: 150 }),
   })
 }
 
