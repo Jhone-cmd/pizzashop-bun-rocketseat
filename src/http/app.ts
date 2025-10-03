@@ -8,6 +8,7 @@ import { fetchOrders } from "./routes/fetch-orders"
 import { getMonthReceipt } from "./routes/get -month-receipt"
 import { getDayOrdersAmount } from "./routes/get-day-orders-amount"
 import { getManagedRestaurant } from "./routes/get-managed-restaurant"
+import { getMonthOrdersAmount } from "./routes/get-month-orders-amount"
 import { getOrderDetails } from "./routes/get-order-details"
 import { getProfile } from "./routes/get-profile"
 import { registerRestaurant } from "./routes/register-restaurant"
@@ -30,6 +31,7 @@ app.use(cancelOrder)
 app.use(fetchOrders)
 app.use(getMonthReceipt)
 app.use(getDayOrdersAmount)
+app.use(getMonthOrdersAmount)
 
 app.onError(({ error, code, set }) => {
   switch (code) {
