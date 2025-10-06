@@ -10,7 +10,8 @@
     "rules": {
       "suspicious": {
         "noConsole": "off",
-        "useAwait": "off"
+        "useAwait": "off",
+        "noGlobalIsNan": "off"
       },
       "nursery": {
         "noShadow": "off"
@@ -22,7 +23,8 @@
       "style": {
         "noMagicNumbers": "off",
         "useDefaultSwitchClause": "off",
-        "noNonNullAssertion": "off"
+        "noNonNullAssertion": "off",
+        "noNestedTernary": "off"
       },
       "performance": {
         "noBarrelFile": "off",

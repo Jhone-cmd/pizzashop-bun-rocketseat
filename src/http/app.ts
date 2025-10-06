@@ -6,6 +6,7 @@ import { deliverOrder } from "./routes/deliver-order"
 import { dispatchOrder } from "./routes/dispatch-order"
 import { fetchOrders } from "./routes/fetch-orders"
 import { getMonthReceipt } from "./routes/get -month-receipt"
+import { getDailyInPeriod } from "./routes/get-daily-receipt-in-period"
 import { getDayOrdersAmount } from "./routes/get-day-orders-amount"
 import { getManagedRestaurant } from "./routes/get-managed-restaurant"
 import { getMonthCanceledOrdersAmount } from "./routes/get-month-canceled-orders-amount"
@@ -36,6 +37,7 @@ app.use(getDayOrdersAmount)
 app.use(getMonthOrdersAmount)
 app.use(getMonthCanceledOrdersAmount)
 app.use(getPopularProducts)
+app.use(getDailyInPeriod)
 
 app.onError(({ error, code, set }) => {
   switch (code) {
