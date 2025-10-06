@@ -11,6 +11,7 @@ import { getManagedRestaurant } from "./routes/get-managed-restaurant"
 import { getMonthCanceledOrdersAmount } from "./routes/get-month-canceled-orders-amount"
 import { getMonthOrdersAmount } from "./routes/get-month-orders-amount"
 import { getOrderDetails } from "./routes/get-order-details"
+import { getPopularProducts } from "./routes/get-popular-products"
 import { getProfile } from "./routes/get-profile"
 import { registerRestaurant } from "./routes/register-restaurant"
 import { sendAuthLink } from "./routes/send-auth-link"
@@ -34,6 +35,7 @@ app.use(getMonthReceipt)
 app.use(getDayOrdersAmount)
 app.use(getMonthOrdersAmount)
 app.use(getMonthCanceledOrdersAmount)
+app.use(getPopularProducts)
 
 app.onError(({ error, code, set }) => {
   switch (code) {
