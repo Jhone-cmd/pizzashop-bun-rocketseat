@@ -1,5 +1,7 @@
 @baseUrl = http://localhost:3333
+@auth_token = eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ6YXE2dnZwMmV2Mmc3eHk2M2xycGRmdXciLCJyZXN0YXVyYW50SWQiOiJhdXhkOHQ0eG5ua2NxdjZjMXR0N3NnNWciLCJpYXQiOjE3NTk3NTc4MDd9.d1wxVoR8WVfbdQV9LehK9Al9xxqSTBcBeo1fnY4TwuYffmQtjuRCh8-S2FXt9Akv7vLrYCn-_jc2KijmbgOIEKTPJnQZ5_mXs6bnCxLOPE7mqfFN5HOWLtYdwcGrgC7uz6fuBg7n1Ns-hETtnh1MSiKjbbcvxfyfOD9FScAAe8FhA8nMfgjfEjB3jqJWSw-1iVcJDlOEMbojHxMB3s4U_QnV2PqOUAkU3S77starTYHgFZO4cdK4TmDmMnqzwKXE2xhWasz_B51p7NKWV2iTJSEV5vctQEXRJILCR1SR0y4PXr189dqiWYTtEjNFKLzmykYZ3Dug5DSO65VGMTGMlg
 
+### Registrar um restaurante
 POST {{baseUrl}}/restaurants
 content-type: application/json
 
@@ -12,6 +14,7 @@ content-type: application/json
 
 ###
 
+### Autenticação na Aplicação
 POST {{baseUrl}}/authenticate
 content-type: application/json
 
@@ -19,4 +22,101 @@ content-type: application/json
 	"email": "admin@admin.com"
 }
 
+###
+
+### Enviar link de autenticação
+POST {{baseUrl}}/auth-links
+content-type: application/json
+
+{
+    "email": "admin@admin.com"
+}
+
+###
+
+### Buscar perfil do usuário autenticado
+GET {{baseUrl}}/me
+Cookie: authCookie={{auth_token}}
+
+###
+
+### Buscar restaurante gerenciado pelo usuário autenticado
+GET {{baseUrl}}/managed-restaurant
+Cookie: authCookie={{auth_token}}
+###
+
+### Buscar pedidos
+GET {{baseUrl}}/orders?pageIndex=0
+Cookie: authCookie={{auth_token}}
+###
+
+### Buscar detalhes de um pedido
+GET {{baseUrl}}/orders/1
+Cookie: authCookie={{auth_token}}
+# Altere o ID conforme necessário
+
+###
+
+### Aprovar pedido
+POST {{baseUrl}}/orders/1/approve
+Cookie: authCookie={{auth_token}}
+# Altere o ID conforme necessário
+
+###
+
+### Despachar pedido
+POST {{baseUrl}}/orders/1/dispatch
+Cookie: authCookie={{auth_token}}
+# Altere o ID conforme necessário
+
+###
+
+### Marcar pedido como entregue
+POST {{baseUrl}}/orders/1/deliver
+Cookie: authCookie={{auth_token}}
+# Altere o ID conforme necessário
+
+###
+
+### Cancelar pedido
+POST {{baseUrl}}/orders/1/cancel
+Cookie: authCookie={{auth_token}}
+# Altere o ID conforme necessário
+
+###
+
+### Buscar receita do mês
+GET {{baseUrl}}/metrics/month-receipt
+Cookie: authCookie={{auth_token}}
+###
+
+### Buscar quantidade de pedidos do dia
+GET {{baseUrl}}/metrics/day-orders-amount
+Cookie: authCookie={{auth_token}}
+###
+
+### Buscar quantidade de pedidos do mês
+GET {{baseUrl}}/metrics/month-orders-amount
+Cookie: authCookie={{auth_token}}
+###
+
+### Buscar quantidade de pedidos cancelados no mês
+GET {{baseUrl}}/metrics/month-canceled-orders-amount
+Cookie: authCookie={{auth_token}}
+###
+
+### Buscar produtos populares
+GET {{baseUrl}}/metrics/popular-products
+Cookie: authCookie={{auth_token}}
+
+###
+
+### Buscar receita diária em um período
+GET {{baseUrl}}/metrics/daily-receipt-in-period
+Cookie: authCookie={{auth_token}}
+###
+
+### Logout
+POST {{baseUrl}}/sign-out
+Cookie: authCookie={{auth_token}}
 ###

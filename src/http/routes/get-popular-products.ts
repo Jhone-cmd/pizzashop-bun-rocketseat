@@ -7,7 +7,7 @@ import { UnauthorizedError } from "../errors/unauthorized-error"
 
 export const getPopularProducts = new Elysia()
   .use(auth)
-  .get("/metrics/get-popular-products", async ({ getCurrentUser }) => {
+  .get("/metrics/popular-products", async ({ getCurrentUser }) => {
     const { restaurantId } = await getCurrentUser()
 
     if (!restaurantId) {

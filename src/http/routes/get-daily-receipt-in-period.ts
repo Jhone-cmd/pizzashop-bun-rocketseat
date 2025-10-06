@@ -8,7 +8,7 @@ import { auth } from "../auth"
 import { UnauthorizedError } from "../errors/unauthorized-error"
 
 export const getDailyInPeriod = new Elysia().use(auth).get(
-  "/metrics/get-daily-in-period",
+  "/metrics/daily-receipt-in-period",
   async ({ getCurrentUser, query, set }) => {
     const { restaurantId } = await getCurrentUser()
 
